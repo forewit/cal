@@ -17,7 +17,7 @@ window.onload = function () {
             // User is signed out.
             document.getElementById('sign-in-status').textContent = 'Signed out';
             document.getElementById('account-details').textContent = 'null';
-            document.getElementById('sign-in-button').textContent = 'Sign in';
+            document.getElementById('sign-in-button').textContent = 'Sign in with GitHub';
         }
     }, function (error) {
         console.log(error);

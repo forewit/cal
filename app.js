@@ -93,7 +93,7 @@ document.getElementById('sign-in-button').addEventListener('click', function () 
 // ------------------------------------------------
 
 
-// read data from firestore ------------------------
+// read / write data in firestore -------------------
 async function getLoginCount(uid) {
     const docRef = doc(db, "users", uid);
     const docSnap = await getDoc(docRef);
@@ -109,7 +109,6 @@ async function getLoginCount(uid) {
         return newCount;
     } else {
         // doc.data() will be undefined in this case
-
         // create a new document
         await setDoc(doc(db, "users", uid), { loginCount: 1 });
 

@@ -5,38 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no"/>
     <link rel="icon" type="image/x-icon" href="./favicon.ico" />
     <link rel="stylesheet" type="text/css" href="style.css">
-
-    <!--- Firebase  -->
-    <script src="https://www.gstatic.com/firebasejs/ui/4.8.1/firebase-ui-auth.js"></script>
-    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.8.1/firebase-ui-auth.css"/>
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-        // TODO: Add SDKs for Firebase products that you want to use
-        // https://firebase.google.com/docs/web/setup#available-libraries
-      
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-          apiKey: "AIzaSyAsBkU7NKqKn9gAV07V_21AkQMw3ZJQ9hQ",
-          authDomain: "canvas-2fdd2.firebaseapp.com",
-          databaseURL: "https://canvas-2fdd2.firebaseio.com",
-          projectId: "canvas-2fdd2",
-          storageBucket: "canvas-2fdd2.appspot.com",
-          messagingSenderId: "989212373436",
-          appId: "1:989212373436:web:2491b895c5a13ec3007bb9"
-        };
-      
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-      </script>  
 </head>
 
   <body>
     <!-- Main body -->
     <button id="sign-in-button">Sign in with GitHub</button>
-
     <h1>Firebase testing app</h1>
     <pre id="account-details"></pre>
+    <pre id="login-count"></pre>
 
     <!-- Scripts -->
     <script type="module" src="./app.js"></script>

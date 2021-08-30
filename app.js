@@ -10,13 +10,11 @@ window.onload = function () {
     auth.onAuthStateChanged(function (user) {
         if (user) {
             // User is signed in.
-            document.getElementById('sign-in-status').textContent = 'Signed in';
-            document.getElementById('account-details').textContent = user.displayName;
+            document.getElementById('account-details').textContent = 'Signed in as: ' + user.displayName;
             document.getElementById('sign-in-button').textContent = 'Sign out';
         } else {
             // User is signed out.
-            document.getElementById('sign-in-status').textContent = 'Signed out';
-            document.getElementById('account-details').textContent = 'null';
+            document.getElementById('account-details').textContent = 'Signed out';
             document.getElementById('sign-in-button').textContent = 'Sign in with GitHub';
         }
     }, function (error) {

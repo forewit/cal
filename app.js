@@ -2,6 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
 import { getAuth, signInWithPopup, GithubAuthProvider, signOut } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js'
 import { getFirestore, setDoc, getDoc, doc } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js'
+import { getDatabase, ref, onValue, get, set, remove } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -19,19 +20,27 @@ const app = initializeApp(firebaseConfig);
 const provider = new GithubAuthProvider();
 const auth = getAuth();
 const db = getFirestore(app);
+const realtimeDB = getDatabase();
 
 
 // Track auth state -------------------------------
 window.onload = function () {
+    // Listen for auth state changes
     auth.onAuthStateChanged(function (user) {
         if (user) {
             // User is signed in.
             document.getElementById('account-details').textContent = 'Signed in as: ' + user.displayName;
             document.getElementById('sign-in-button').textContent = 'Sign out';
 
+            // update firestore login count
             document.getElementById('login-count').classList.remove('hidden');
             getLoginCount(user.uid).then(function (data) {
                 document.getElementById('login-count').textContent = 'Login count: ' + data;
+            });
+
+            // update realtime database
+            set(ref(realtimeDB, 'users/' + user.uid), {
+                name: user.displayName,
             });
         } else {
             // User is signed out.
@@ -42,16 +51,44 @@ window.onload = function () {
     }, function (error) {
         console.log(error);
     });
+
+    // get online users
+    onValue(ref(realtimeDB, "users"), (snapshot) => {
+        if (snapshot.exists()) {
+            let users = snapshot.val();
+            let onlineUsers = '';
+            for (let user in users) 
+                onlineUsers += users[user].name + '<br>';
+            
+            document.getElementById('online-users').innerHTML = onlineUsers;
+        } else {
+            document.getElementById('online-users').innerHTML = 'No users online';
+        }
+    });
 }
+
+window.onbeforeunload = function(){
+    if (auth.currentUser) {
+        preSignOut(auth.currentUser.uid);
+    }
+ }
 // ------------------------------------------------
 
+async function preSignOut(uid) {
+    get(ref(realtimeDB, "users/" + uid)).then(function (data) {
+        return data.sessionCount;
+    }).catch(function (error) {
+        console.log(error);
+    });
+
+    remove(ref(realtimeDB, 'users/' + uid));
+}
 
 // Sign in and out -------------------------------
 document.getElementById('sign-in-button').addEventListener('click', function () {
     if (auth.currentUser) {
         // User is signed in.
-
-        // Sign out ---------------------------------------
+        preSignOut(auth.currentUser.uid);
         signOut(auth).then(() => {
             // Sign-out successful.
             console.log('signed out.');
@@ -59,7 +96,6 @@ document.getElementById('sign-in-button').addEventListener('click', function () 
             // An error happened.
             console.error(error);
         });
-        // -------------------------------------------------
     } else {
         // No user is signed in.
 
@@ -92,7 +128,6 @@ document.getElementById('sign-in-button').addEventListener('click', function () 
 });
 // ------------------------------------------------
 
-
 // read / write data in firestore -------------------
 async function getLoginCount(uid) {
     const docRef = doc(db, "users", uid);
@@ -118,9 +153,6 @@ async function getLoginCount(uid) {
 }
 // ------------------------------------------------
 
-async function incrementLoginCount(uid) {
-
-}
 
 /*
 // Get a reference to the database service
